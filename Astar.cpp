@@ -1,118 +1,65 @@
-#include <iostream>
-#include <vector>
-#include <algorithm>
-#include <cmath>
-#include <set>
-using namespace std;
-#define gridX 10
-#define gridY 10
-class node
-{	
-	public:
-		//x,y is the location of the node and parents denotes how to reach this node
-		int x;
-		int y;
-		int parentX;
-		int parentY;
-		
-		//might need to change these to doubles
-		float Gcost; //distance from source
-		float Hcost; //distance from destination
-		float Fcost; //g+h
-		
-		node(int a= NULL, int b=NULL)
-		{
-			x=a;
-			y=b;
-			parentX = NULL;
-			parentY= NULL;
-			Gcost = FLT_MAX;
-			Hcost = FLT_MAX;
-			Fcost = FLT_MAX;
-		}
-		
-		//operator overlaoding
-		bool operator < (node n) const
-		{
-			return (this->Fcost < n.Fcost);
-		}
-		bool operator > (node n) const
-		{
-			return (this->Fcost > n.Fcost);
-		}
-		bool operator == (node n) const
-		{
-			if(this->x==n.x && this->y==n.y)
-				return true;
-			else
-				return false;
-		}
-		
-		// calculation of euclidean distance from a node to the destination
-		void calHCost(node dest)
-		{
-			Hcost = (float)sqrt(pow((this->x-dest.x),2) + pow((this->y-dest.y),2) );
-		}
-		float getFcost()
-		{
-			return Gcost + Hcost;
-		}
-		void print() const
-		{
-			cout << "(" << this->x << ", " << this->y << ")" << endl;
-		}
-		//get the 8 nearest neighbors to the current node
-		vector<node> getNeighbors()
-		{
-			vector <node> nodes;
-			for (int i=x-1;i<=x+1;i++)
-			{
-				for (int j=y-1;j<=y+1;j++)
-				{
-					if(i==this->x && j==this->y) continue; //skip the current node from the loop
-					else if (i<0 || i>gridX || j<0 || j>gridY) continue; //get the neighbors if they are not out of bounds
-					node n(i,j);
-					n.parentX=this->x;
-					n.parentY=this->y;
-					n.Gcost = ( this->Gcost + (int)(sqrt(pow(i,2)+pow(j,2))*10) ); //accumulate Gcost as we explore nodes
-					nodes.push_back(n);
-				}
-			}
-			return nodes;
-		}
-};
+#include "Astar/utils.h"
 
 void Asearch(bool grid[gridX][gridY], node src, node dest)
 {
-	//start with source node
-	//get neighbors and add to openlist
-	//pop neighbor with least f cost
-	//explore neighbors and add to openlist
-	//etc
-	set<node> openList;
-	set<node> closedlist;
-	openList.insert(src);
+	vector<node> openList; // a list for the nodes of interest to be chosen from
+	vector<node> closedList; //a list of the nodes that have been explored already
+	openList.push_back(src);
 	while (!openList.empty())
 	{
-		node current_node = *openList.begin();
-		//check if destination
-		if (current_node == dest)
+		//seelct the node with the least cost from the open list and explore its neighbors
+		auto current_node_itr = min_element(openList.begin(), openList.end());
+		node current_node = *current_node_itr;
+		vector<node> current_candidates = current_node.getNeighbors(dest);
+		openList.erase(current_node_itr);
+		for (auto it = current_candidates.begin(); it != current_candidates.end(); it++)
 		{
-			//declare bankruptcy
+			//for each neighbor, check if it's the destination
+			//check if the cell has already been explored or
+			//if it's reachable by another node with a lower cost path if so ignore it
+			//otherwise add it to the openlist
+			node candidate = *it;
+			//check if destination
+			if (candidate == dest)
+			{
+				cout << "found destiantion" << endl;
+				closedList.push_back(current_node);
+				trace(closedList,candidate,src); //display the selected path
+				//node tmp = candidate;
+				//while (!(tmp == src))
+				//{
+				//	tmp.print();
+				//	tmp = *find(closedList.begin(), closedList.end(), node(tmp.parentX, tmp.parentY));
+				//}
+				//src.print();
+
+				return;
+			}
+			//check if the cell is not blocked
+			else if (!grid[candidate.x][candidate.y])
+			{
+				continue;
+			}
+			//check if the cell is already closed
+			else if (match(closedList, candidate))
+			{
+				continue;
+			}
+			//check if the cell is in the open list (reachable from another node)
+			//this will add the node with the new route but does not remove the old one from the list
+			//remember to remove 
+			else if (match(openList, candidate))
+			{
+				continue;
+			}
+			else
+				openList.push_back(candidate);
 		}
-
-		//if(current_node in closedlist)
-		//{
-		//	check if better path
-		//}
-		openList.erase(current_node);
-		closedlist.insert(current_node);
-
-		vector<node> current_candidates = current_node.getNeighbors();
-		openList.insert(current_candidates.begin(), current_candidates.end());
-
+		closedList.push_back(current_node);
 	}
+	cout << "destination not found"; //algorithm has finished and goal was not found
 }
+
 
 int main(void)
 {
@@ -120,10 +67,16 @@ int main(void)
 	//get source and destination
 	//set their node values f g h
 	//check inputs for errors out of bounds, or blocked source or destination
-	node source(3,3);
+	node source(0,0);
 	source.Gcost = 0;
-	node destination(2, 6);
-	bool grid[gridX][gridY] = { 1 };
-	//Asearch(grid, source, destination);
+	node destination(10, 5);
+	bool grid[gridX][gridY];
+	memset(grid, true, sizeof(grid));
+	grid[3][0] = false;
+	grid[3][1] = false;
+	grid[3][2] = false;
+	grid[3][3] = false;
+	grid[3][4] = false;
+	Asearch(grid, source, destination);
 	return 0;
 }
