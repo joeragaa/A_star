@@ -2,6 +2,7 @@
 #include <vector>
 #include <algorithm>
 #include <cmath>
+#include <string>
 
 using namespace std;
 #define gridX 11
@@ -117,7 +118,10 @@ bool match(vector<node> list, node n)
 void trace(vector<node> list, node n, node source)
 {
 	if (n == source) //trace complete
+	{
+		n.print();
 		return;
+	}
 	else
 	{
 		//display the node n, set n to its parent, and trace from new n
@@ -125,4 +129,13 @@ void trace(vector<node> list, node n, node source)
 		n = *find(list.begin(), list.end(), node(n.parentX, n.parentY));
 		trace(list, n, source);
 	}
+}
+
+//function to parse user input
+//get the x and y values from an input string
+void tokenize(int* x, int* y, string word)
+{
+	int del_pos = word.find(" ");
+	*x = stoi(word.substr(0, del_pos));
+	*y = stoi(word.substr(del_pos + 1));
 }

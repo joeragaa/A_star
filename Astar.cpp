@@ -1,5 +1,4 @@
 #include "Astar/utils.h"
-
 void Asearch(bool grid[gridX][gridY], node src, node dest)
 {
 	vector<node> openList; // a list for the nodes of interest to be chosen from
@@ -63,20 +62,43 @@ void Asearch(bool grid[gridX][gridY], node src, node dest)
 
 int main(void)
 {
-	//get binary occupancy grid
+	//get binary occupancy grid 
 	//get source and destination
-	//set their node values f g h
+	//set source cost
 	//check inputs for errors out of bounds, or blocked source or destination
-	node source(0,0);
-	source.Gcost = 0;
-	node destination(10, 5);
+	//start search
 	bool grid[gridX][gridY];
 	memset(grid, true, sizeof(grid));
-	grid[3][0] = false;
-	grid[3][1] = false;
-	grid[3][2] = false;
-	grid[3][3] = false;
-	grid[3][4] = false;
-	Asearch(grid, source, destination);
+	cout << "input the obstacles of the map" << endl;
+	cout << "hit q to exit" << endl;
+	int x=0,y=0;
+	string input;
+	while (1)
+	{
+		cout << "format: x y >>  ";
+		getline(cin, input);
+		if (input == "q") break;
+		tokenize(&x, &y, input);
+		grid[x][y] = false;
+	}
+	cout << "input the source node >> ";
+	getline(cin, input);
+	tokenize(&x, &y, input);
+	node source(x, y);
+	source.Gcost = 0;
+	cout << "input the destination node >> ";
+	getline(cin, input);
+	tokenize(&x, &y, input);
+	cout << endl;
+	node destination(x, y);
+	if (!grid[source.x][source.y] || !grid[destination.x][destination.y])
+	{
+		cout << "source or destination input blocked" << endl;
+		return -1;
+	}
+	else
+	{
+		Asearch(grid, source, destination);
+	}
 	return 0;
 }
