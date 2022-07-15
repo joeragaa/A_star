@@ -3,7 +3,8 @@
 #include <algorithm>
 #include <cmath>
 #include <string>
-
+#include <cstring>
+#include <float.h>
 using namespace std;
 #define gridX 11
 #define gridY 6
@@ -24,12 +25,12 @@ public:
 	float Hcost; //distance from destination
 	float Fcost; //g+h
 
-	node(int a = NULL, int b = NULL)
+	node(int a = -1, int b = -1)
 	{
 		x = a;
 		y = b;
-		parentX = NULL;
-		parentY = NULL;
+		parentX = -1;
+		parentY = -1;
 		Gcost = FLT_MAX;
 		Hcost = FLT_MAX;
 		Fcost = FLT_MAX;
