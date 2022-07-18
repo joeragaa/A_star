@@ -6,8 +6,8 @@
 #include <cstring>
 #include <float.h>
 using namespace std;
-#define gridX 11
-#define gridY 6
+#define gridX 10
+#define gridY 10
 int euclidean_distance(int x1, int y1, int x2, int y2);
 
 

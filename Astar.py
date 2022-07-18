@@ -11,7 +11,6 @@ def distance(x1, y1, x2, y2):
     else:
         return 14
 
-
 class node:
     def __init__(self, a=-1, b=-1):
         self.x = a
@@ -32,10 +31,9 @@ class node:
         return (self.x == n.x) and (self.y == n.y)
 
     def calHcost(self, dest):
-        self.Hcost = math.sqrt((self.x - dest.x) ** 2 + (self.y - dest.y) ** 2)
+        self.Hcost = math.sqrt((self.x - dest.x) ** 2 + (self.y - dest.y) ** 2)*10
 
     # return a list of the nodes neighboring this node
-    #
     def get_neighbors(self, dest):
         neighbors = []
         for i in range(self.x - 1, self.x + 2):
@@ -54,6 +52,18 @@ class node:
                 neighbors.append(neighbor)
         return neighbors
 
+    def print(self):
+        print(self.x,self.y)
+
+def trace(list,n,source):
+    if n == source:
+        n.print()
+        return 
+    else:
+        n.print()
+        #n = [list[list.index(node(n.parentx,n.parenty))]]
+        n = [i for i in list if i == node(n.parentx,n.parenty)].pop()
+        trace(list,n,source)
 
 def Asearch(grid, src, dest):
     open = list()
@@ -69,6 +79,8 @@ def Asearch(grid, src, dest):
 
             if candidate == dest:
                 print("destination found")
+                closed.append(current_node)
+                trace(closed,candidate,src)
                 return
 
             if candidate in closed and closed[closed.index(candidate)] < candidate:
@@ -84,13 +96,17 @@ def Asearch(grid, src, dest):
 
     print("destination not found")
 
-
+import time
 def main():
     grid = np.ones((10, 10), np.int8).tolist()
     src = node(0, 0)
     src.Gcost = 0
     destination = node(5, 5)
+    grid[1][0]=0
+    grid[1][1]=0
+    t= time.time()
     Asearch(grid, src, destination)
+    print(f"time to search {(time.time()-t)*1000000}")
 
 
 main()

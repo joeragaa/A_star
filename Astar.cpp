@@ -1,5 +1,6 @@
 #include "utils.h"
-
+#include <chrono>
+using namespace std::chrono;
 void Asearch(bool grid[gridX][gridY], node src, node dest)
 {
 	vector<node> openList; // a list for the nodes of interest to be chosen from
@@ -25,14 +26,6 @@ void Asearch(bool grid[gridX][gridY], node src, node dest)
 				cout << "found destiantion" << endl;
 				closedList.push_back(current_node);
 				trace(closedList,candidate,src); //display the selected path
-				//node tmp = candidate;
-				//while (!(tmp == src))
-				//{
-				//	tmp.print();
-				//	tmp = *find(closedList.begin(), closedList.end(), node(tmp.parentX, tmp.parentY));
-				//}
-				//src.print();
-
 				return;
 			}
 			//check if the cell is not blocked
@@ -99,7 +92,11 @@ int main(void)
 	}
 	else
 	{
+		auto start = high_resolution_clock::now();
 		Asearch(grid, source, destination);
+		auto stop = high_resolution_clock::now();
+		auto duration = duration_cast<microseconds>(stop - start);
+		cout<<"time to search: "<<duration.count()<<endl;
 	}
 	return 0;
 }
