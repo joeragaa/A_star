@@ -1,4 +1,5 @@
-#include "Astar/utils.h"
+#include "utils.h"
+
 void Asearch(bool grid[gridX][gridY], node src, node dest)
 {
 	vector<node> openList; // a list for the nodes of interest to be chosen from
