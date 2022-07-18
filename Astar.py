@@ -61,7 +61,6 @@ def trace(list,n,source):
         return 
     else:
         n.print()
-        #n = [list[list.index(node(n.parentx,n.parenty))]]
         n = [i for i in list if i == node(n.parentx,n.parenty)].pop()
         trace(list,n,source)
 
@@ -99,14 +98,24 @@ def Asearch(grid, src, dest):
 import time
 def main():
     grid = np.ones((10, 10), np.int8).tolist()
-    src = node(0, 0)
+    print("enter the obstacles on the map or hit q to exit")
+    while(1):
+        user_input = input("format: x y >> ")
+        if user_input == 'q': break
+        else:
+            i,j = tuple(int(a) for a in user_input.split())
+            grid[i][j] = 0
+    
+    user_input = input("enter source node: x y >> ")
+    i,j = tuple(int(a) for a in user_input.split())
+    src = node(i, j)
     src.Gcost = 0
-    destination = node(5, 5)
-    grid[1][0]=0
-    grid[1][1]=0
+    user_input = input("enter destination node: x y >> ")
+    i,j = tuple(int(a) for a in user_input.split())
+    destination = node(i, j)
     t= time.time()
     Asearch(grid, src, destination)
-    print(f"time to search {(time.time()-t)*1000000}")
+    print(f"time to search {(time.time()-t)*1000000} microseconds")
 
 
 main()
