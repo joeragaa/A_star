@@ -1,4 +1,5 @@
 import math
+from pydoc import ispackage
 import numpy as np
 import time
 import matplotlib.pyplot as plt
@@ -107,55 +108,71 @@ def display(arr):
     axes = axes.matshow(arr)
     cb_labels = ['obstacle','open','goal','destination','path']
     cb = figure.colorbar(axes)
-    cb.ax.get_yaxis().set_ticks([0,1,2])
-    cb.ax.set_yticklabels(['source','goal', 'path'])
-    cb.ax.tick_params(labelsize=8) 
-    cb.set_label("index")
+    cb.ax.get_yaxis().set_ticks(list(range(len(cb_labels))))
+    cb.ax.set_yticklabels(cb_labels)
     plt.show()
 
 #get a valid input point from the user
 def get_input(isPoint=False):
     user_input = input("format: x y >> ")
     if user_input is None:
-        raise Exception("invalid input")
+        raise ValueError("invalid input")
+    
+    if user_input=='q':
+        raise Exception
     
     x,y=tuple(int(a) for a in user_input.split())
     if x is None or y is None:
-        raise Exception("invalid input")
+        raise ValueError("invalid input")
          
     if (isPoint==True) and (x<0 or y<0 or x>gridX or y>gridY):
-        raise Exception("invalid input")
+        raise ValueError("invalid input")
         
     else:
         return x,y
 
 def main():
-    user_input = input("enter map dimensions. format: x y >> ")
-    gridX,gridY = tuple(int(a) for a in user_input.split())
+    print("enter map dimensions")
+    try:
+        gridX,gridY = get_input()
+    except:
+        print("map dimensions must be positive integers")
+        return
     grid = np.ones((gridX, gridY), np.int8).tolist()
 
     print("enter the obstacles on the map or hit q to exit")
-    while(1):
-        user_input = input("format: x y >> ")
-        if user_input == 'q': break
-        else:
-            i,j = tuple(int(a) for a in user_input.split())
+    try:
+        while(1):
+            i,j = get_input(isPoint=True)
             grid[i][j] = 0
-    
-    user_input = input("enter source node: x y >> ")
-    i,j = tuple(int(a) for a in user_input.split())
-    src = node(i, j)
-    src.Gcost = 0
+    except ValueError:
+        print("obstacles must be within 0 and specified map dimension")
+        return
+    except:
+        pass
 
-    user_input = input("enter destination node: x y >> ")
-    i,j = tuple(int(a) for a in user_input.split())
-    destination = node(i, j)
+    print("enter source node")
+    try:
+        i,j = get_input(isPoint=True)
+        src = node(i, j)
+        src.Gcost = 0
+    except:
+        return
 
+    print("enter destination node")
+    try:
+        i,j = get_input(isPoint=True)
+        destination = node(i, j)
+    except:
+        return
+
+    #search 
     t= time.time()
     Asearch(grid, src, destination)
     print(f"time to search {int((time.time()-t)*1000)} milliseconds")
 
     #visulization steps
+    #an arbitrary value is given to the source, destination and path nodes for visualization purposes
     for t in vis_list:
         grid[t.x][t.y]=4
     grid[src.x][src.y]=2
