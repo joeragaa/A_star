@@ -1,5 +1,7 @@
 import math
 import numpy as np
+import time
+import matplotlib.pyplot as plt
 
 gridX = 10
 gridY = 10
@@ -55,12 +57,15 @@ class node:
     def print(self):
         print(self.x,self.y)
 
+vis_list = []
 def trace(list,n,source):
     if n == source:
         n.print()
+        vis_list.append(n)
         return 
     else:
         n.print()
+        vis_list.append(n)
         n = [i for i in list if i == node(n.parentx,n.parenty)].pop()
         trace(list,n,source)
 
@@ -95,9 +100,40 @@ def Asearch(grid, src, dest):
 
     print("destination not found")
 
-import time
+    
+def display(arr):
+    figure = plt.figure()
+    axes = figure.add_subplot()
+    axes = axes.matshow(arr)
+    cb_labels = ['obstacle','open','goal','destination','path']
+    cb = figure.colorbar(axes)
+    cb.ax.get_yaxis().set_ticks([0,1,2])
+    cb.ax.set_yticklabels(['source','goal', 'path'])
+    cb.ax.tick_params(labelsize=8) 
+    cb.set_label("index")
+    plt.show()
+
+#get a valid input point from the user
+def get_input(isPoint=False):
+    user_input = input("format: x y >> ")
+    if user_input is None:
+        raise Exception("invalid input")
+    
+    x,y=tuple(int(a) for a in user_input.split())
+    if x is None or y is None:
+        raise Exception("invalid input")
+         
+    if (isPoint==True) and (x<0 or y<0 or x>gridX or y>gridY):
+        raise Exception("invalid input")
+        
+    else:
+        return x,y
+
 def main():
-    grid = np.ones((10, 10), np.int8).tolist()
+    user_input = input("enter map dimensions. format: x y >> ")
+    gridX,gridY = tuple(int(a) for a in user_input.split())
+    grid = np.ones((gridX, gridY), np.int8).tolist()
+
     print("enter the obstacles on the map or hit q to exit")
     while(1):
         user_input = input("format: x y >> ")
@@ -110,12 +146,21 @@ def main():
     i,j = tuple(int(a) for a in user_input.split())
     src = node(i, j)
     src.Gcost = 0
+
     user_input = input("enter destination node: x y >> ")
     i,j = tuple(int(a) for a in user_input.split())
     destination = node(i, j)
+
     t= time.time()
     Asearch(grid, src, destination)
-    print(f"time to search {(time.time()-t)*1000000} microseconds")
+    print(f"time to search {int((time.time()-t)*1000)} milliseconds")
+
+    #visulization steps
+    for t in vis_list:
+        grid[t.x][t.y]=4
+    grid[src.x][src.y]=2
+    grid[destination.x][destination.y]=3
+    display(grid)
 
 
 main()
