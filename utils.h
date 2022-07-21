@@ -132,6 +132,18 @@ void trace(vector<node> list, node n, node source)
 	}
 }
 
+bool is_valid(int x, int y)
+{
+	if (x<0 || x>(gridX-1) || y<0 || y>(gridY-1))
+	{
+		return false;
+	}
+	else
+	{
+		return true;
+	}
+}
+
 //function to parse user input
 //get the x and y values from an input string
 void tokenize(int* x, int* y, string word)
@@ -139,4 +151,13 @@ void tokenize(int* x, int* y, string word)
 	int del_pos = word.find(" ");
 	*x = stoi(word.substr(0, del_pos));
 	*y = stoi(word.substr(del_pos + 1));
+	if (is_valid(*x,*y))
+	{
+		return;
+	}
+	else
+	{
+		throw;
+	}
+	
 }

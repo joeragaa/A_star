@@ -63,40 +63,48 @@ int main(void)
 	//start search
 	bool grid[gridX][gridY];
 	memset(grid, true, sizeof(grid));
-	cout << "input the obstacles of the map" << endl;
-	cout << "hit q to exit" << endl;
-	int x=0,y=0;
-	string input;
-	while (1)
+	try
 	{
-		cout << "format: x y >>  ";
+		cout << "input the obstacles of the map (" <<gridX<<"x"<<gridY<<")"<< endl;
+		cout << "hit q to exit" << endl;
+		int x=0,y=0;
+		string input;
+		while (1)
+		{
+			cout << "format: x y >>  ";
+			getline(cin, input);
+			if (input == "q") break;
+			tokenize(&x, &y, input);
+			grid[x][y] = false;
+		}
+		cout << "input the source node >> ";
 		getline(cin, input);
-		if (input == "q") break;
 		tokenize(&x, &y, input);
-		grid[x][y] = false;
+		node source(x, y);
+		source.Gcost = 0;
+		cout << "input the destination node >> ";
+		getline(cin, input);
+		tokenize(&x, &y, input);
+		cout << endl;
+		node destination(x, y);
+		if (!grid[source.x][source.y] || !grid[destination.x][destination.y])
+		{
+			cout << "source or destination input blocked" << endl;
+			return -1;
+		}
+		else
+		{
+			auto start = high_resolution_clock::now();
+			Asearch(grid, source, destination);
+			auto stop = high_resolution_clock::now();
+			auto duration = duration_cast<milliseconds>(stop - start);
+			cout<<"time to search: "<<duration.count()<<endl;
+		}
 	}
-	cout << "input the source node >> ";
-	getline(cin, input);
-	tokenize(&x, &y, input);
-	node source(x, y);
-	source.Gcost = 0;
-	cout << "input the destination node >> ";
-	getline(cin, input);
-	tokenize(&x, &y, input);
-	cout << endl;
-	node destination(x, y);
-	if (!grid[source.x][source.y] || !grid[destination.x][destination.y])
+	catch(...)
 	{
-		cout << "source or destination input blocked" << endl;
+		cout<<"invalid node input.";
 		return -1;
-	}
-	else
-	{
-		auto start = high_resolution_clock::now();
-		Asearch(grid, source, destination);
-		auto stop = high_resolution_clock::now();
-		auto duration = duration_cast<microseconds>(stop - start);
-		cout<<"time to search: "<<duration.count()<<endl;
 	}
 	return 0;
 }
