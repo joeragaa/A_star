@@ -150,7 +150,7 @@ def main():
         print("map dimensions must be positive integers")
         return
     grid = np.ones((gridX, gridY), np.int8).tolist()
-
+    
     print("enter the obstacles on the map or hit q to exit")
     try:
         while(1):
