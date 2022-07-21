@@ -8,7 +8,7 @@ These two implementations are kept as similiar as possible in order to perform s
 A* requires the input of a map (Binary occupancy map) denoting the areas of the map which are
 designated as obstacles, which the algorithm cannot explore, and areas which are free to explore. it also requires the input of two points on the map and it can then proceed to search for the shortest path between these two points.
 
-For simplicity, instead of reading a map from disk, the programs prompts the user for the size of a map which is assumed to be all open and the user is then prompted for obstacle locations on the map.
+For simplicity, instead of reading a map from disk, the programs prompts the user for the size of a map(in the python version only, the c++ version assumes the size of the map) which is assumed to be all open and the user is then prompted for obstacle locations on the map.
 the user is also prompted for the location of the source and destination nodes. All inputs are parsed for errors and the program proceeds accordingly.
 
 The cost of the nodes is taken as the euclidean distance. Moreover, these distances are all multiplied by a factor of 10 to give round, more readable numbers.

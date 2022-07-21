@@ -1,12 +1,18 @@
 import math
-from pydoc import ispackage
 import numpy as np
 import time
 import matplotlib.pyplot as plt
 
+# default map values
 gridX = 10
 gridY = 10
 
+# dictionary used for visulization
+# the obstalce and open spaces must be at positions 0 and 1 
+# respectively as they are used for boolean operations
+vis_labels = ['obstacle', 'open', 'source', 'destination', 'path']
+vis_dict = {k:v for v,k in enumerate(vis_labels)}
+vis_list = [] #list of nodes on the generated path
 
 def distance(x1, y1, x2, y2):
     if x1 == x2 or y1 == y2:
@@ -61,10 +67,6 @@ class node:
     def print(self):
         print(self.x, self.y)
 
-
-vis_list = []
-
-
 def trace(list, n, source):
     if n == source:
         n.print()
@@ -112,16 +114,14 @@ def Asearch(grid, src, dest):
 def display(arr):
     figure = plt.figure()
     axes = figure.add_subplot()
-    axes = axes.matshow(arr)
-    cb_labels = ['obstacle', 'open', 'goal', 'destination', 'path']
+    axes = axes.matshow(np.transpose(arr))
+    cb_labels = vis_labels
     cb = figure.colorbar(axes)
     cb.ax.get_yaxis().set_ticks(list(range(len(cb_labels))))
     cb.ax.set_yticklabels(cb_labels)
     plt.show()
 
 # get a valid input point from the user
-
-
 def get_input(isPoint=False):
     user_input = input("format: x y >> ")
     if user_input is None:
@@ -144,6 +144,7 @@ def get_input(isPoint=False):
 def main():
     print("enter map dimensions")
     try:
+        global gridX, gridY
         gridX, gridY = get_input()
     except:
         print("map dimensions must be positive integers")
@@ -182,11 +183,10 @@ def main():
     print(f"time to search {int((time.time()-t)*1000)} milliseconds")
 
     # visulization steps
-    # an arbitrary value is given to the source, destination and path nodes for visualization purposes
     for t in vis_list:
-        grid[t.x][t.y] = 4
-    grid[src.x][src.y] = 2
-    grid[destination.x][destination.y] = 3
+        grid[t.x][t.y] = vis_dict["path"]
+    grid[src.x][src.y] = vis_dict["source"]
+    grid[destination.x][destination.y] = vis_dict["destination"]
     display(grid)
 
 
