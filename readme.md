@@ -29,3 +29,15 @@ This implementation of the algorithm preserves memory by only creating objects f
 
 
 # Results
+Here are some visualizations for the algorithm working with different maps with varying sizes.
+<p align="center">
+  <img src="img/15x15.png">
+</p>
+
+<p align="center">
+  <img src="img/100x100.png">
+</p>
+
+<p align="center">
+  <img src="img/Figure_1.png">
+</p>
